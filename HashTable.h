@@ -57,6 +57,13 @@ public:
     //creates the offset vector
     void createOffsets();
 
+    //clears table
+    void clear();
+
+    //resizes table
+    void resize();
+
+
     //overloads <<
     friend ostream& operator<<(ostream& os, const HashTable& hashTable);
 };

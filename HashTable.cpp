@@ -13,6 +13,7 @@
 #include <vector>
 #include <cstdlib>
 #include <random>
+#include <iostream>
 
 using namespace std;
 
@@ -25,6 +26,7 @@ HashTable::HashTable(size_t initCapacity) {
 
     }
 
+    this->createOffsets();
     this->keyCount = 0;
 
 }
@@ -32,20 +34,30 @@ HashTable::HashTable(size_t initCapacity) {
 //inserts a key value pair into the hash table
 bool HashTable::insert(const string &key, const size_t value) {
 
+
 int probeValue = 0;
+
 
     //probes the hash table until an empty field is found
     for (int i = 0; i < this->offsets.size(); i++) {
 
         //sets the probe value to hash
-        probeValue = (stoi(key) + this->offsets[i]) % this->size();
+        probeValue = (stoi(key) + this->offsets[i]) % this->capacity();
+
 
         //if the bucket is empty then load the data into the bucket
         if (this->tableData[probeValue].isEmpty()) {
+
             this->tableData[probeValue].load(key, value);
+
 
             //increases the keycount
             keyCount++;
+
+            //if the load factor is great enough resize
+            if (this->alpha() >= 0.5) {
+                this->resize();
+            }
 
             //return
             return true;
@@ -67,7 +79,7 @@ int probe = 0;
     //probes through the hash table
     for (int i = 0; i < this->offsets.size(); i++) {
         //sets probe value
-        probe = (stoi(key) + this->offsets[i]) % this->size();
+        probe = (stoi(key) + this->offsets[i]) % this->capacity();
 
         //if the key matches
         if (this->tableData[probe].getKey() == key) {
@@ -101,7 +113,7 @@ bool HashTable::contains(const string &key) const {
     //probes through the hash table
     for (int i = 0; i < this->offsets.size(); i++) {
         //sets probe value
-        probe = (stoi(key) + this->offsets[i]) % this->size();
+        probe = (stoi(key) + this->offsets[i]) % this->capacity();
 
         //if the key matches
         if (this->tableData[probe].getKey() == key) {
@@ -129,13 +141,13 @@ optional<size_t> HashTable::get(const string &key) const {
     //probes through the hash table
     for (int i = 0; i < this->offsets.size(); i++) {
         //sets probe value
-        probe = (stoi(key) + this->offsets[i]) % this->size();
+        probe = (stoi(key) + this->offsets[i]) % this->capacity();
 
         //if the key matches
         if (this->tableData[probe].getKey() == key) {
 
             //return the value
-            return this->tableData[probe].getValue();
+            return this->tableData[probe].value;
         }
 
         //if ESS end the loop
@@ -162,7 +174,7 @@ size_t& HashTable::operator[](const string &key) {
 
             //mark found true and return the value
             found = true;
-            return this->tableData[i].getValue();
+            return this->tableData[i].value;
         }
     }
 
@@ -238,15 +250,77 @@ void HashTable::createOffsets() {
 
 }
 
+//clears the table out
+void HashTable::clear() {
+
+    for (int i = 0; i < this->tableData.size(); i++) {
+
+        this->tableData[i].resset();
+        this->keyCount = 0;
+    }
+}
+
+void HashTable::resize() {
+
+    //creates temp table
+    vector<HashTableBucket> hashHold;
+
+    //copies old table to temp
+    for (int i = 0; i < this->tableData.size(); i++) {
+        //copies the data over to temp table
+        hashHold.push_back(this->tableData[i]);
+    }
+
+
+    //clears out the table
+    this->clear();
+
+    //doubles the size of the table by adding a pushback for each element already inside the table while also resizing offsets
+    for (int i = 0; i < hashHold.size(); i++) {
+
+
+
+        //creates a new empty bucket
+        this->tableData.push_back(HashTableBucket());
+
+        //increases offsets
+        this->offsets.push_back(0);
+    }
+
+    //repopulates offsets
+    for (int i = 0; i < this->tableData.size()-1; i++) {
+        this->offsets[i+1];
+    }
+
+    //reshuffles offsets
+    //creates the random number generator
+    random_device rand;
+    mt19937 gen(rand());
+
+    //shuffles the vector with inputs of (start, end, generator)
+    shuffle(offsets.begin(), offsets.end(), gen);
+
+    //re-adds every item in the temp table back into the main table
+    for (int i = 0; i < hashHold.size(); i++) {
+
+        //if normal
+        if (hashHold[i].getType() == "Normal") {
+            this->insert(hashHold[i].getKey(), hashHold[i].getValue());
+        }
+    }
+
+
+}
+
 
 ostream &operator<<(ostream &os, const HashTable &obj) {
 
     //itterate through the hash table
-    for (int i = 0; i < obj.size(); i++) {
+    for (int i = 0; i < obj.capacity(); i++) {
 
         //if type == Normal then stage the bucket
         if (obj.tableData[i].getType() == "Normal") {
-            os << "Bucket" << i << ": " << obj.tableData[i] << endl;
+            os << "Bucket " << i << ": " << obj.tableData[i] << endl;
         }
     }
 

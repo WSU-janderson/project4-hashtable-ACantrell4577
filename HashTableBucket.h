@@ -14,9 +14,11 @@ class HashTableBucket {
 private:
     string type;
     string key;
-    size_t value;
 
 public:
+
+    size_t value;
+
     //default constructor
     HashTableBucket() : type("ESS"), key(""), value(0){};
 
@@ -32,12 +34,15 @@ public:
     //returns if bucket is empty
     bool isEmpty() const;
 
-    //getters
+    //ressets bucket
+    void resset();
+
+    //getters and setters
     string getKey() const;
-
+    void setKey(const string& key);
     size_t getValue() const;
-
     string getType() const;
+    void setType(const string& type);
 
     friend ostream& operator<<(ostream& os, const HashTableBucket& bucket);
 };

@@ -65,4 +65,21 @@ size_t HashTableBucket::getValue() const {
     return this->value;
 }
 
+//setter for key
+void HashTableBucket::setKey(const string& key) {
+    this->key = key;
+}
+
+//setter for type
+void HashTableBucket::setType(const string& type) {
+    this->type = type;
+}
+
+void HashTableBucket::resset() {
+    this->type = "EES";
+    this->value = 0;
+    this->key = "";
+}
+
+
 #endif
