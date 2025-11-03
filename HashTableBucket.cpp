@@ -19,6 +19,15 @@ void HashTableBucket::load(const string& key, const size_t& value) {
 
 }
 
+//removes item from bucket
+void HashTableBucket::unload() {
+
+    this->type = "EAR";
+    this->key = "";
+    this->value = 0;
+
+}
+
 //returns true if bucket isnt Normal
 bool HashTableBucket::isEmpty() const {
 
@@ -34,11 +43,21 @@ bool HashTableBucket::isEmpty() const {
 //overloads friend operator <<
 ostream& operator<<(ostream& os, const HashTableBucket& bucket) {
 
+    //Stages the buckets print
+    os << "<" + bucket.getKey() + ", " + to_string(bucket.getValue()) + ">";
+
+    return os;
+
 }
 
 //getter for the bucket's key
 string HashTableBucket::getKey() const {
     return this->key;
+}
+
+//returns the bucket's type
+string HashTableBucket::getType() const {
+    return this->type;
 }
 
 //getter for bucket's value

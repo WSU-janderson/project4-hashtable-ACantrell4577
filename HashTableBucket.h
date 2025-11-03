@@ -26,12 +26,18 @@ public:
     //inserts into the bucket
     void load(const string& key, const size_t& value);
 
+    //removes from bucket
+    void unload();
+
     //returns if bucket is empty
     bool isEmpty() const;
 
     //getters
     string getKey() const;
+
     size_t getValue() const;
+
+    string getType() const;
 
     friend ostream& operator<<(ostream& os, const HashTableBucket& bucket);
 };

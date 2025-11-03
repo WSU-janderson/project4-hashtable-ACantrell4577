@@ -19,6 +19,8 @@ class HashTable {
 
 private:
     vector<HashTableBucket> tableData;
+    size_t keyCount;
+    vector<int> offsets;
 
 public:
 
@@ -51,6 +53,9 @@ public:
 
     //returns total items in the hash table
     size_t size() const;
+
+    //creates the offset vector
+    void createOffsets();
 
     //overloads <<
     friend ostream& operator<<(ostream& os, const HashTable& hashTable);
