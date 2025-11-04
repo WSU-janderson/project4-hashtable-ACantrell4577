@@ -42,8 +42,8 @@ int probeValue = 0;
     for (int i = 0; i < this->offsets.size(); i++) {
 
         //sets the probe value to hash
-        probeValue = (stoi(key) + this->offsets[i]) % this->capacity();
-
+        //probeValue = (stoi(key) + this->offsets[i]) % this->capacity();
+        probeValue = (hash<string>()(key) + this->offsets[i]) % this->capacity();
 
         //if the bucket is empty then load the data into the bucket
         if (this->tableData[probeValue].isEmpty()) {
@@ -75,11 +75,10 @@ int probeValue = 0;
 bool HashTable::remove(const string &key) {
 
 int probe = 0;
-
     //probes through the hash table
     for (int i = 0; i < this->offsets.size(); i++) {
         //sets probe value
-        probe = (stoi(key) + this->offsets[i]) % this->capacity();
+        probe = (hash<string>()(key) + this->offsets[i]) % this->capacity();
 
         //if the key matches
         if (this->tableData[probe].getKey() == key) {
@@ -102,6 +101,8 @@ int probe = 0;
             return false;
         }
     }
+    //else everything return false
+    return false;
 
 }
 
@@ -113,7 +114,7 @@ bool HashTable::contains(const string &key) const {
     //probes through the hash table
     for (int i = 0; i < this->offsets.size(); i++) {
         //sets probe value
-        probe = (stoi(key) + this->offsets[i]) % this->capacity();
+        probe = (hash<string>()(key) + this->offsets[i]) % this->capacity();
 
         //if the key matches
         if (this->tableData[probe].getKey() == key) {
@@ -131,6 +132,9 @@ bool HashTable::contains(const string &key) const {
         }
     }
 
+    //if never found return false
+    return false;
+
 }
 
 //recieves a key and returns the value
@@ -141,7 +145,7 @@ optional<size_t> HashTable::get(const string &key) const {
     //probes through the hash table
     for (int i = 0; i < this->offsets.size(); i++) {
         //sets probe value
-        probe = (stoi(key) + this->offsets[i]) % this->capacity();
+        probe = (hash<string>()(key) + this->offsets[i]) % this->capacity();
 
         //if the key matches
         if (this->tableData[probe].getKey() == key) {
@@ -158,6 +162,9 @@ optional<size_t> HashTable::get(const string &key) const {
             return nullopt;
         }
     }
+
+    //if never found return nullopt
+    return nullopt;
 
 }
 
